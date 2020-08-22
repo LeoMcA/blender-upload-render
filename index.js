@@ -1,4 +1,7 @@
+const https = require("https");
+const fs = require("fs");
 const express = require("express");
+const basic_auth = require("express-basic-auth");
 const socketio = require("socket.io");
 const file_upload = require("socketio-file-upload");
 const child_process = require("child_process");
@@ -6,16 +9,31 @@ const child_process = require("child_process");
 const app = express();
 const port = 3000;
 
+const users = {};
+users[process.env.USERNAME] = process.env.PASSWORD;
+
 app.use(
+  basic_auth({
+    challenge: true,
+    users,
+  }),
   express.static("static"),
   express.static("node_modules/bootstrap/dist"),
   express.static("download"),
   file_upload.router
 );
 
-const server = app.listen(port, () => {
-  console.log(`blender-upload-render listening at http://localhost:${port}`);
-});
+const server = https
+  .createServer(
+    {
+      key: fs.readFileSync("ssl/key.pem"),
+      cert: fs.readFileSync("ssl/cert.pem"),
+    },
+    app
+  )
+  .listen(port);
+
+console.log(`blender-upload-render listening at https://localhost:${port}`);
 
 const io = socketio.listen(server);
 io.sockets.on("connection", (socket) => {
