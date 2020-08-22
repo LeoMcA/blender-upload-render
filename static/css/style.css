@@ -1,0 +1,7 @@
+#terminal {
+  background: #000;
+  color: #fff;
+  overflow-y: scroll;
+  white-space: pre-wrap;
+  height: 400px;
+}

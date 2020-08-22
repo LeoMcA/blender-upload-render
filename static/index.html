@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+
+    <title>blender-upload-render</title>
+  </head>
+
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-4 p-1 p-md-4 text-center">
+          <h2>1. Upload</h2>
+          <input type="file" id="upload_input" />
+          <div class="progress mt-3">
+            <div
+              class="progress-bar"
+              role="progressbar"
+              aria-valuenow="0"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            ></div>
+          </div>
+        </div>
+        <div class="col-sm-4 p-1 p-md-4 text-center">
+          <h2>2. Launch</h2>
+          <button id="launch" class="btn btn-primary" disabled>Launch</button>
+        </div>
+        <div class="col-sm-4 p-1 p-md-4 text-center">
+          <h2>3. Download</h2>
+          <a
+            id="download"
+            href="#"
+            class="btn btn-primary disabled"
+            tabindex="-1"
+            role="button"
+            aria-disabled="true"
+            >Download</a
+          >
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <pre id="terminal"></pre>
+        </div>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/siofu/client.js"></script>
+    <script src="/js/script.js"></script>
+  </body>
+</html>
