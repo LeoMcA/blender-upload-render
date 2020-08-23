@@ -11,14 +11,18 @@ const cli_progress = require("cli-progress");
 const app = express();
 const port = process.env.PORT || 3000;
 
-const users = {};
-users[process.env.USERNAME] = process.env.PASSWORD;
+if (process.env.PASSWORD) {
+  const users = {};
+  users[process.env.USERNAME] = process.env.PASSWORD;
+  app.use(
+    basic_auth({
+      challenge: true,
+      users,
+    })
+  );
+}
 
 app.use(
-  basic_auth({
-    challenge: true,
-    users,
-  }),
   express.static("static"),
   express.static("node_modules/bootstrap/dist"),
   express.static("download"),
