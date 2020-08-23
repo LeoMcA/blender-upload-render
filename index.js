@@ -1,3 +1,4 @@
+const http = require("http");
 const https = require("https");
 const fs = require("fs");
 const express = require("express");
@@ -7,7 +8,7 @@ const file_upload = require("socketio-file-upload");
 const child_process = require("child_process");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const users = {};
 users[process.env.USERNAME] = process.env.PASSWORD;
@@ -23,17 +24,23 @@ app.use(
   file_upload.router
 );
 
-const server = https
-  .createServer(
-    {
-      key: fs.readFileSync("ssl/key.pem"),
-      cert: fs.readFileSync("ssl/cert.pem"),
-    },
-    app
-  )
-  .listen(port);
+const server = process.env.USE_SSL
+  ? https
+      .createServer(
+        {
+          key: fs.readFileSync("ssl/key.pem"),
+          cert: fs.readFileSync("ssl/cert.pem"),
+        },
+        app
+      )
+      .listen(port)
+  : http.createServer(app).listen(port);
 
-console.log(`blender-upload-render listening at https://localhost:${port}`);
+console.log(
+  `blender-upload-render listening at http${
+    process.env.USE_SSL ? "s" : ""
+  }://localhost:${port}`
+);
 
 const io = socketio.listen(server);
 io.sockets.on("connection", (socket) => {
