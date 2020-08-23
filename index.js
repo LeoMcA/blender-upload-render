@@ -6,6 +6,7 @@ const basic_auth = require("express-basic-auth");
 const socketio = require("socket.io");
 const file_upload = require("socketio-file-upload");
 const child_process = require("child_process");
+const cli_progress = require("cli-progress");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -47,8 +48,24 @@ io.sockets.on("connection", (socket) => {
   const uploader = new file_upload();
   uploader.dir = "upload";
   uploader.listen(socket);
+  const progress = new cli_progress.SingleBar();
+
+  uploader.on("start", ({ file }) => {
+    console.log(`uploading ${file.name} (${file.size}B)`);
+    progress.start(file.size, file.bytesLoaded);
+  });
+
+  uploader.on("progress", ({ file }) => {
+    progress.update(file.bytesLoaded);
+  });
+
+  uploader.on("error", (e) => {
+    progress.stop();
+    console.error(e.error);
+  });
 
   uploader.on("saved", (e) => {
+    progress.stop();
     socket.on("launch", () => {
       const blender = child_process.spawn("blender", [
         "-b",
